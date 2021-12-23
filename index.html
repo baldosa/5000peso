@@ -1,18 +1,91 @@
 <html>
-<style>
-body {
-  background-color: black;
-  margin: 0;
-  padding: 0;
-}
-.img {
-    text-align: center;
+<head>
+  <style>
 
-}
-</style>
-</html>
+    html, body { width:100%; height:100%; overflow: hidden;} /* just to be sure these are full screen*/
+
+    canvas {
+      /* position: absolute; */
+      top: 0%;
+      left: 50%;
+      /* transform: translate(-50% , -50% ); */
+    }
+  </style>
+  <title>toi renojado dame 5000peso</title>
+</head>
 <body>
-  <p class="img">
-    <img src="4a7627fa-0da5-415c-8ccd-57ec63d4adbc.webp" alt="TOI RENOJADO DAME 5000 PESO" />
-  </p>
+  <canvas id="canvas"></canvas>
+  <script src="https://calculadoradeinflacion.com/js/countries.js"></script>
+  <script>
+
+/* impunemente robado de https://calculadoradeinflacion.com/ */
+function computeInflation(monthFrom, yearFrom, monthTo, yearTo) {
+  let output = 1;
+  while (!(monthFrom == monthTo && yearFrom == yearTo)) {
+    let d = countries['argentina'][yearFrom.toString()][monthFrom.toString()];
+    output *= 1 + d / 100;
+    if (monthFrom == 12) {
+      monthFrom = 1;
+      yearFrom += 1;
+    } else {
+      monthFrom += 1;
+    }
+  }
+  return output;
+}
+
+
+function drawStuff() {
+  let canvasContext = document.getElementById('canvas').getContext('2d');
+  let image = new Image();
+  image.src = 'cat.png';
+  image.onload = () => {
+      let canvasContext = canvas.getContext('2d');
+      let wrh = image.width / image.height;
+      let newWidth = canvas.width;
+      let newHeight = newWidth / wrh;
+      if (newHeight > canvas.height) {
+        newHeight = canvas.height;
+        newWidth = newHeight * wrh;
+      }
+      let xOffset = newWidth < canvas.width ? ((canvas.width - newWidth) / 2) : 0;
+      let yOffset = newHeight < canvas.height ? ((canvas.height - newHeight) / 2) : 0;
+
+      canvasContext.drawImage(image, xOffset, yOffset, newWidth, newHeight);
+      canvasContext.font = "30px Impact";
+      canvasContext.fillStyle = "#fff";
+      canvasContext.strokeStyle = '#000';
+      canvasContext.fillText(`toi renojado dame ${parseFloat(computeInflation(7, 2020, 11, 2021)*5000).toFixed(2)}peso`, xOffset+(image.width/2), 50);
+      canvasContext.strokeText(`toi renojado dame ${parseFloat(computeInflation(7, 2020, 11, 2021)*5000).toFixed(2)}peso`, xOffset+(image.width/2), 50);
+
+
+    };
+}
+
+function positionCanvas() {
+  let canvasContext = document.getElementById('canvas').getContext('2d');
+
+  
+  // resize the canvas to fill browser window dynamically
+  window.addEventListener('resize', positionCanvas, false);
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+  /**
+   * Your drawings need to be inside this function otherwise they will be reset when 
+   * you resize the browser window and the canvas goes will be cleared.
+   */
+  drawStuff();
+};
+
+
+
+window.onload = (event) => {
+  console.log(countries);
+  positionCanvas();
+  console.log(computeInflation(7, 2020, 11, 2021)*5000);
+  };
+  
+  </script>
 </body>
+</html>
