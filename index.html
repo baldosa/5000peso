@@ -1,24 +1,100 @@
+<!DOCTYPE html>
 <html>
 <head>
+<link rel="stylesheet" href="https://unpkg.com/chota@latest">
+
   <style>
 
     html, body { width:100%; height:100%; overflow: hidden;} /* just to be sure these are full screen*/
 
     canvas {
-      /* position: absolute; */
-      top: 0%;
+      position: absolute;
+      top: 50%;
       left: 50%;
-      /* transform: translate(-50% , -50% ); */
+      transform: translate(-50% , -50% );
     }
+    svg {
+      width: 4%;
+      position: absolute;
+      top: 2%;
+      right: 2%;
+      fill: grey;
+      cursor: pointer; 
+    }
+    svg:hover {
+      fill: red;
+    }
+
+  #help-text {
+    background-color: #FFF;
+    top: 10%;
+    left: 25%;
+    width: 50%;
+    visibility: hidden;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+
+  }
   </style>
   <title>toi renojado dame 5000peso</title>
 </head>
 <body>
   <canvas id="canvas"></canvas>
+  <svg id="help" aria-hidden="true" focusable="false" data-prefix="far" data-icon="question-circle" class="svg-inline--fa fa-question-circle fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+    <path d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 448c-110.532 0-200-89.431-200-200 0-110.495 89.472-200 200-200 110.491 0 200 89.471 200 200 0 110.53-89.431 200-200 200zm107.244-255.2c0 67.052-72.421 68.084-72.421 92.863V300c0 6.627-5.373 12-12 12h-45.647c-6.627 0-12-5.373-12-12v-8.659c0-35.745 27.1-50.034 47.579-61.516 17.561-9.845 28.324-16.541 28.324-29.579 0-17.246-21.999-28.693-39.784-28.693-23.189 0-33.894 10.977-48.942 29.969-4.057 5.12-11.46 6.071-16.666 2.124l-27.824-21.098c-5.107-3.872-6.251-11.066-2.644-16.363C184.846 131.491 214.94 112 261.794 112c49.071 0 101.45 38.304 101.45 88.8zM298 368c0 23.159-18.841 42-42 42s-42-18.841-42-42 18.841-42 42-42 42 18.841 42 42z"></path>
+  </svg>
+  <div class="card" id="help-text">
+    <header>
+      <h4>toi renojado dame 5000peso</h4>
+    </header>
+    <p>Uso este meme desde julio 2020 y me pareció que había que actualizarlo en base al IPC del INDEC. La data de inflación la robo impunemente de <a href="https://calculadoradeinflacion.com/" title="Calculadora de inflación">acá</a></p>
+    <p>Si querés cambiar desde cuándo contar y/o el monto podés acá abajo</p>
+    <footer class="is-right">
+      <select id="month-from">
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6</option>
+        <option selected>7</option>
+        <option>8</option>
+        <option>9</option>
+        <option>10</option>
+        <option>11</option>
+        <option>12</option>
+      </select>
+      <select id="year-from">
+        <option>2003</option>
+        <option>2004</option>
+        <option>2005</option>
+        <option>2006</option>
+        <option>2007</option>
+        <option>2008</option>
+        <option>2009</option>
+        <option>2010</option>
+        <option>2011</option>
+        <option>2012</option>
+        <option>2013</option>
+        <option>2014</option>
+        <option>2015</option>
+        <option>2016</option>
+        <option>2017</option>
+        <option>2018</option>
+        <option>2019</option>
+        <option selected>2020</option>
+        <option>2021</option>
+      </select>
+      <a id="submit" class="button primary">Actualizar</a>
+      <a id="cancel" class="button">Cerrar</a>
+    </footer>
+  </div>
+  <!-- impunemente robado de https://calculadoradeinflacion.com/  -->
   <script src="https://calculadoradeinflacion.com/js/countries.js"></script>
   <script>
 
-/* impunemente robado de https://calculadoradeinflacion.com/ */
+
 function computeInflation(monthFrom, yearFrom, monthTo, yearTo) {
   let output = 1;
   while (!(monthFrom == monthTo && yearFrom == yearTo)) {
@@ -34,58 +110,67 @@ function computeInflation(monthFrom, yearFrom, monthTo, yearTo) {
   return output;
 }
 
-
-function drawStuff() {
-  let canvasContext = document.getElementById('canvas').getContext('2d');
+function canvasStuff() {
+  // vars
+  let fromMonth = parseInt(document.getElementById('month-from').value)
+  let fromYear = parseInt(document.getElementById('year-from').value)
+  let toYear = Math.max(...Object.keys(countries['argentina']));
+  let toMonth = Math.max(...Object.keys(countries['argentina'][toYear]));
+  monto = computeInflation(fromMonth, fromYear, toMonth, toYear)*5000
+  
+  // title
+  document.title = `toi renojado dame ${parseFloat(monto).toFixed(2)}peso`
+  
+  // text
+  const imgText = [`toi renojado`, `dame ${parseFloat(monto).toFixed(2)}peso`]
+  // load image
   let image = new Image();
   image.src = 'cat.png';
+  
   image.onload = () => {
-      let canvasContext = canvas.getContext('2d');
-      let wrh = image.width / image.height;
-      let newWidth = canvas.width;
-      let newHeight = newWidth / wrh;
-      if (newHeight > canvas.height) {
-        newHeight = canvas.height;
-        newWidth = newHeight * wrh;
-      }
-      let xOffset = newWidth < canvas.width ? ((canvas.width - newWidth) / 2) : 0;
-      let yOffset = newHeight < canvas.height ? ((canvas.height - newHeight) / 2) : 0;
+    let wrh = image.width / image.height;
 
-      canvasContext.drawImage(image, xOffset, yOffset, newWidth, newHeight);
-      canvasContext.font = "30px Impact";
+    let canvasContext = document.getElementById('canvas').getContext('2d');
+    let canvasPos = document.getElementById('canvas').getBoundingClientRect();
+    // resize the canvas to fill browser window dynamically
+    window.addEventListener('resize', canvasStuff, false);
+      canvas.width = image.width//window.innerWidth/wrh;
+      canvas.height = image.height//window.innerHeight/wrh;
+    
+      canvasContext.drawImage(image, 0, 0);
+      canvasContext.font = "50px Impact";
       canvasContext.fillStyle = "#fff";
       canvasContext.strokeStyle = '#000';
-      canvasContext.fillText(`toi renojado dame ${parseFloat(computeInflation(7, 2020, 11, 2021)*5000).toFixed(2)}peso`, xOffset+(image.width/2), 50);
-      canvasContext.strokeText(`toi renojado dame ${parseFloat(computeInflation(7, 2020, 11, 2021)*5000).toFixed(2)}peso`, xOffset+(image.width/2), 50);
+      
+      canvasContext.textAlign = "center";
+      let textYPos = 50
+      imgText.forEach((el) => {
+        canvasContext.fillText(el, (image.width/2), textYPos);
+        canvasContext.strokeText(el, (image.width/2), textYPos);
+        textYPos *= 2.5
+      })
 
-
-    };
-}
-
-function positionCanvas() {
-  let canvasContext = document.getElementById('canvas').getContext('2d');
-
-  
-  // resize the canvas to fill browser window dynamically
-  window.addEventListener('resize', positionCanvas, false);
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    
-  /**
-   * Your drawings need to be inside this function otherwise they will be reset when 
-   * you resize the browser window and the canvas goes will be cleared.
-   */
-  drawStuff();
+  }
 };
 
 
 
 window.onload = (event) => {
-  console.log(countries);
-  positionCanvas();
-  console.log(computeInflation(7, 2020, 11, 2021)*5000);
+  canvasStuff();
   };
-  
+
+document.getElementById('help').onclick = () => {
+  document.getElementById('help-text').style.visibility = 'visible';
+}
+
+document.getElementById('submit').onclick = () => {
+  document.getElementById('help-text').style.visibility = 'hidden';
+  canvasStuff();
+}
+
+document.getElementById('cancel').onclick = () => {
+  document.getElementById('help-text').style.visibility = 'hidden';
+}
   </script>
 </body>
 </html>
