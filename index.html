@@ -185,7 +185,10 @@ function canvasStuff() {
   let fromMonth = parseInt(document.getElementById('month-from').value)
   let fromYear = parseInt(document.getElementById('year-from').value)
   let toYear = Math.max(...Object.keys(countries['argentina']));
-  let toMonth = Math.max(...Object.keys(countries['argentina'][toYear]));
+  // let toMonth = Math.max(...Object.keys(countries['argentina'][toYear]));
+
+  let toMonth = new Date().getMonth() + 1
+  
   monto = computeInflation(fromMonth, fromYear, toMonth, toYear)*5000
   
   // title
