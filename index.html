@@ -1,292 +1,362 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <head>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
 
-<link rel="stylesheet" href="https://unpkg.com/chota@latest">
+    <link rel="stylesheet" href="https://unpkg.com/chota@latest" />
 
-  <style>
+    <style>
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      } /* just to be sure these are full screen*/
 
-    html, body { width:100%; height:100%; overflow: hidden;} /* just to be sure these are full screen*/
+      canvas {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
 
-    canvas {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50% , -50% );
-    }
+      .popup {
+        background-color: var(--bg-color);
+        padding: 1em;
+        top: 10%;
+        left: 25%;
+        width: 50%;
+        visibility: hidden;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+      }
 
-  .popup {
-    background-color: var(--bg-color);
-    padding: 1em;
-    top: 10%;
-    left: 25%;
-    width: 50%;
-    visibility: hidden;
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
-  }
+      #footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        padding-right: 0.5em;
+        text-align: right;
+      }
+      footer svg {
+        width: 2%;
+        filter: invert(56%) sepia(87%) saturate(410%)
+          hue-rotate(99deg) brightness(90%) contrast(95%);
+      }
 
-  #footer {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    padding-right: 0.5em;
-    text-align: right;
-  }
-  footer svg {
-    width: 2%;
-    filter: invert(56%) sepia(87%) saturate(410%) hue-rotate(99deg) brightness(90%) contrast(95%);
-  }
+      @media (max-width: 1000px) {
+        canvas {
+          position: absolute;
+          top: 50%;
+        }
 
-  @media (max-width: 1000px) {
-    canvas {
-      position: absolute;
-      top: 50%;
-    }
+        .popup {
+          top: 10%;
+          left: 2%;
+          right: 2%;
+          width: 96%;
+        }
 
-    .popup {
-      top: 10%;
-      left: 2%;
-      right: 2%;
-      width: 96%;
-    }
+        footer svg {
+          width: 10%;
+        }
+      }
 
-    footer svg {
-      width: 10%;
-    }
-  }
-
-
-body.dark {
-  --bg-color: #000;
-  --bg-secondary-color: #131316;
-  --color-primary: #17c16f;
-  --color-lightGrey: #d2d6dd;
-  --color-grey: #747681;
-  --color-darkGrey: #3f4144;
-  --color-error: #d43939;
-  --color-success: #28bd14;
-  --grid-maxWidth: 120rem;
-  --grid-gutter: 2rem;
-  --font-size: 1.6rem;
-  --font-color: #d2d6dd;
-  --font-family-sans: sans-serif;
-  --font-family-mono: monaco, "Consolas", "Lucida Console", monospace;
-}
-  </style>
-  <title>toi renojado dame 5000peso</title>
-</head>
-<body>
-  <canvas id="canvas"></canvas>
-  <div class="popup" id="help-popup">
-    <header>
-      <h4>toi renojado dame 5000peso</h4>
-    </header>
-    <p>Uso este meme desde julio 2020 y me pareció que había que actualizarlo en base al IPC del INDEC. La data de inflación la robo impunemente de <a href="https://calculadoradeinflacion.com/" title="Calculadora de inflación">acá</a></p>
-    <p>Si querés cambiar desde cuándo contar y/o el monto podés acá abajo</p>
-    <footer class="is-right">
-      <select id="month-from">
-        <option>1</option>
-        <option>2</option>
-        <option>3</option>
-        <option>4</option>
-        <option>5</option>
-        <option>6</option>
-        <option selected>7</option>
-        <option>8</option>
-        <option>9</option>
-        <option>10</option>
-        <option>11</option>
-        <option>12</option>
-      </select>
-      <select id="year-from">
-        <option>2003</option>
-        <option>2004</option>
-        <option>2005</option>
-        <option>2006</option>
-        <option>2007</option>
-        <option>2008</option>
-        <option>2009</option>
-        <option>2010</option>
-        <option>2011</option>
-        <option>2012</option>
-        <option>2013</option>
-        <option>2014</option>
-        <option>2015</option>
-        <option>2016</option>
-        <option>2017</option>
-        <option>2018</option>
-        <option>2019</option>
-        <option selected>2020</option>
-        <option>2021</option>
-      </select>
-      <a id="submit" class="button primary">Actualizar</a>
-      <a class="button cancel">Cerrar</a>
+      body.dark {
+        --bg-color: #000;
+        --bg-secondary-color: #131316;
+        --color-primary: #17c16f;
+        --color-lightGrey: #d2d6dd;
+        --color-grey: #747681;
+        --color-darkGrey: #3f4144;
+        --color-error: #d43939;
+        --color-success: #28bd14;
+        --grid-maxWidth: 120rem;
+        --grid-gutter: 2rem;
+        --font-size: 1.6rem;
+        --font-color: #d2d6dd;
+        --font-family-sans: sans-serif;
+        --font-family-mono: monaco, "Consolas", "Lucida Console",
+          monospace;
+      }
+    </style>
+    <title>toi renojado dame 5000peso</title>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <div class="popup" id="help-popup">
+      <header>
+        <h4>toi renojado dame 5000peso</h4>
+      </header>
+      <p>
+        Uso este meme desde julio 2020 y me pareció que había que
+        actualizarlo en base al IPC del INDEC. La data de inflación la
+        robo impunemente de
+        <a
+          href="https://calculadoradeinflacion.com/"
+          title="Calculadora de inflación"
+          >acá</a
+        >
+      </p>
+      <p>
+        Si querés cambiar desde cuándo contar y/o el monto podés acá
+        abajo
+      </p>
+      <footer class="is-right">
+        <select id="month-from">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+          <option>6</option>
+          <option selected>7</option>
+          <option>8</option>
+          <option>9</option>
+          <option>10</option>
+          <option>11</option>
+          <option>12</option>
+        </select>
+        <select id="year-from">
+          <option>2003</option>
+          <option>2004</option>
+          <option>2005</option>
+          <option>2006</option>
+          <option>2007</option>
+          <option>2008</option>
+          <option>2009</option>
+          <option>2010</option>
+          <option>2011</option>
+          <option>2012</option>
+          <option>2013</option>
+          <option>2014</option>
+          <option>2015</option>
+          <option>2016</option>
+          <option>2017</option>
+          <option>2018</option>
+          <option>2019</option>
+          <option selected>2020</option>
+          <option>2021</option>
+          <option>2022</option>
+          <option>2023</option>
+        </select>
+        <a id="submit" class="button primary">Actualizar</a>
+        <a class="button cancel">Cerrar</a>
+      </footer>
+    </div>
+    <div class="popup" id="share-popup">
+      <header>
+        <h4>Hotlink</h4>
+      </header>
+      <p>
+        Copia y pegá el link para compartir exactamente la misma
+        imagen.
+      </p>
+      <p>
+        <input id="url" type="text" value="" />
+      </p>
+      <footer>
+        <a class="button cancel">Cerrar</a>
+      </footer>
+    </div>
+    <footer id="footer">
+      <a href="#" class="footer-btn" id="share">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path
+            d="M5 7c2.761 0 5 2.239 5 5s-2.239 5-5 5-5-2.239-5-5 2.239-5 5-5zm11.122 12.065c-.073.301-.122.611-.122.935 0 2.209 1.791 4 4 4s4-1.791 4-4-1.791-4-4-4c-1.165 0-2.204.506-2.935 1.301l-5.488-2.927c-.23.636-.549 1.229-.943 1.764l5.488 2.927zm7.878-15.065c0-2.209-1.791-4-4-4s-4 1.791-4 4c0 .324.049.634.122.935l-5.488 2.927c.395.535.713 1.127.943 1.764l5.488-2.927c.731.795 1.77 1.301 2.935 1.301 2.209 0 4-1.791 4-4z"
+          />
+        </svg>
+      </a>
+      <a href="#" class="footer-btn" id="download">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path
+            d="M15.003 3h2.997v5h-2.997v-5zm8.997 1v20h-24v-24h20l4 4zm-19 5h14v-7h-14v7zm16 4h-18v9h18v-9z"
+          />
+        </svg>
+      </a>
+      <a href="#" class="footer-btn" id="help">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path
+            d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm1.25 17c0 .69-.559 1.25-1.25 1.25-.689 0-1.25-.56-1.25-1.25s.561-1.25 1.25-1.25c.691 0 1.25.56 1.25 1.25zm1.393-9.998c-.608-.616-1.515-.955-2.551-.955-2.18 0-3.59 1.55-3.59 3.95h2.011c0-1.486.829-2.013 1.538-2.013.634 0 1.307.421 1.364 1.226.062.847-.39 1.277-.962 1.821-1.412 1.343-1.438 1.993-1.432 3.468h2.005c-.013-.664.03-1.203.935-2.178.677-.73 1.519-1.638 1.536-3.022.011-.924-.284-1.719-.854-2.297z"
+          />
+        </svg>
+      </a>
+      <a
+        class="footer-btn"
+        href="https://github.com/baldosa/5000peso"
+        title="Github repo"
+        target="_blank"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path
+            d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+          />
+        </svg>
+      </a>
     </footer>
-  </div>
-  <div class="popup" id="share-popup">
-    <header>
-      <h4>Hotlink</h4>
-    </header>
-    <p>
-      Copia y pegá el link para compartir exactamente la misma imagen.
-    </p>
-    <p>
-      <input id="url" type="text" value="" />
-    </p>
-    <footer>
-      <a class="button cancel">Cerrar</a>
-    </footer>
-  </div>
-  <footer id="footer">
-    <a href="#" class="footer-btn" id="share">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 7c2.761 0 5 2.239 5 5s-2.239 5-5 5-5-2.239-5-5 2.239-5 5-5zm11.122 12.065c-.073.301-.122.611-.122.935 0 2.209 1.791 4 4 4s4-1.791 4-4-1.791-4-4-4c-1.165 0-2.204.506-2.935 1.301l-5.488-2.927c-.23.636-.549 1.229-.943 1.764l5.488 2.927zm7.878-15.065c0-2.209-1.791-4-4-4s-4 1.791-4 4c0 .324.049.634.122.935l-5.488 2.927c.395.535.713 1.127.943 1.764l5.488-2.927c.731.795 1.77 1.301 2.935 1.301 2.209 0 4-1.791 4-4z"/></svg>
-    </a>
-    <a href="#" class="footer-btn" id="download">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M15.003 3h2.997v5h-2.997v-5zm8.997 1v20h-24v-24h20l4 4zm-19 5h14v-7h-14v7zm16 4h-18v9h18v-9z"/>
-      </svg>
-    </a>
-    <a href="#" class="footer-btn" id="help">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm1.25 17c0 .69-.559 1.25-1.25 1.25-.689 0-1.25-.56-1.25-1.25s.561-1.25 1.25-1.25c.691 0 1.25.56 1.25 1.25zm1.393-9.998c-.608-.616-1.515-.955-2.551-.955-2.18 0-3.59 1.55-3.59 3.95h2.011c0-1.486.829-2.013 1.538-2.013.634 0 1.307.421 1.364 1.226.062.847-.39 1.277-.962 1.821-1.412 1.343-1.438 1.993-1.432 3.468h2.005c-.013-.664.03-1.203.935-2.178.677-.73 1.519-1.638 1.536-3.022.011-.924-.284-1.719-.854-2.297z"/></svg>
-    </a>
-    <a class="footer-btn" href="https://github.com/baldosa/5000peso" title="Github repo" target="_blank">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-      </svg>
-    </a>
-  </footer>
-  <!-- impunemente robado de https://calculadoradeinflacion.com/  -->
-  <script src="https://calculadoradeinflacion.com/js/countries.js"></script>
-  <script>
+    <!-- impunemente robado de https://calculadoradeinflacion.com/  -->
+    <script src="https://calculadoradeinflacion.com/js/countries.js"></script>
+    <script>
+      function computeInflation(
+        monthFrom,
+        yearFrom,
+        monthTo,
+        yearTo
+      ) {
+        let output = 1
+        while (!(monthFrom == monthTo && yearFrom == yearTo)) {
+          let d =
+            countries["argentina"][yearFrom.toString()][
+              monthFrom.toString()
+            ]
+          output *= 1 + d / 100
+          if (monthFrom == 12) {
+            monthFrom = 1
+            yearFrom += 1
+          } else {
+            monthFrom += 1
+          }
+        }
+        return output
+      }
 
+      function canvasStuff() {
+        // vars
+        let fromMonth = parseInt(
+          document.getElementById("month-from").value
+        )
+        let fromYear = parseInt(
+          document.getElementById("year-from").value
+        )
+        let toYear = new Date().getFullYear()
+        let toMonth = new Date().getMonth() + 1
 
-function computeInflation(monthFrom, yearFrom, monthTo, yearTo) {
-  let output = 1;
-  while (!(monthFrom == monthTo && yearFrom == yearTo)) {
-    let d = countries['argentina'][yearFrom.toString()][monthFrom.toString()];
-    output *= 1 + d / 100;
-    if (monthFrom == 12) {
-      monthFrom = 1;
-      yearFrom += 1;
-    } else {
-      monthFrom += 1;
-    }
-  }
-  return output;
-}
+        monto =
+          computeInflation(fromMonth, fromYear, toMonth, toYear) *
+          5000
 
-function canvasStuff() {
-  // vars
-  let fromMonth = parseInt(document.getElementById('month-from').value)
-  let fromYear = parseInt(document.getElementById('year-from').value)
-  let toYear = Math.max(...Object.keys(countries['argentina']));
-  // let toMonth = Math.max(...Object.keys(countries['argentina'][toYear]));
+        // title
+        document.title = `toi renojado dame ${parseFloat(
+          monto
+        ).toFixed(2)}peso`
 
-  let toMonth = new Date().getMonth() + 1
-  
-  monto = computeInflation(fromMonth, fromYear, toMonth, toYear)*5000
-  
-  // title
-  document.title = `toi renojado dame ${parseFloat(monto).toFixed(2)}peso`
-  
-  // text
-  const imgText = [`toi renojado`, `dame ${parseFloat(monto).toFixed(2)}peso`]
-  // load image
-  let image = new Image();
-  image.src = 'cat.png';
-  
-  image.onload = () => {
-    let wrh = image.width / image.height;
+        // text
+        const imgText = [
+          `toi renojado`,
+          `dame ${parseFloat(monto).toFixed(2)}peso`,
+        ]
+        // load image
+        let image = new Image()
+        image.src = "cat.png"
 
-    let canvasContext = document.getElementById('canvas').getContext('2d');
-    let canvasPos = document.getElementById('canvas').getBoundingClientRect();
-    window.addEventListener('resize', canvasStuff, false);
-    let w = 0;
-    let h = 0;
-    if (window.innerWidth < 1000) {
-      w = window.innerWidth;
-      h = window.innerWidth;
-    } else {
-      w = image.width;
-      h = image.height;
-    }
-      canvas.width = w;
-      canvas.height = h;
-      canvasContext.drawImage(image, 0, 0, w, h);
-      canvasContext.font = "50px Impact";
-      canvasContext.fillStyle = "#fff";
-      canvasContext.strokeStyle = '#000';
-      
-      canvasContext.textAlign = "center";
-      let textYPos = 50
-      imgText.forEach((el) => {
-        canvasContext.fillText(el, (w/2), textYPos);
-        canvasContext.strokeText(el, (h/2), textYPos);
-        textYPos *= 2.5
+        image.onload = () => {
+          let wrh = image.width / image.height
+
+          let canvasContext = document
+            .getElementById("canvas")
+            .getContext("2d")
+          let canvasPos = document
+            .getElementById("canvas")
+            .getBoundingClientRect()
+          window.addEventListener("resize", canvasStuff, false)
+          let w = 0
+          let h = 0
+          if (window.innerWidth < 1000) {
+            w = window.innerWidth
+            h = window.innerWidth
+          } else {
+            w = image.width
+            h = image.height
+          }
+          canvas.width = w
+          canvas.height = h
+          canvasContext.drawImage(image, 0, 0, w, h)
+          canvasContext.font = "50px Impact"
+          canvasContext.fillStyle = "#fff"
+          canvasContext.strokeStyle = "#000"
+
+          canvasContext.textAlign = "center"
+          let textYPos = 50
+          imgText.forEach((el) => {
+            canvasContext.fillText(el, w / 2, textYPos)
+            canvasContext.strokeText(el, h / 2, textYPos)
+            textYPos *= 2.5
+          })
+        }
+      }
+
+      function urlMaker() {
+        document.getElementById("url").value = `${
+          window.location.href.split("?")[0]
+        }?month=${document.getElementById("month-from").value}&year=${
+          document.getElementById("year-from").value
+        }`.replace("#", "")
+      }
+
+      function urlParser() {
+        const queryString = window.location.search
+        const urlParams = new URLSearchParams(queryString)
+        if (urlParams.get("month")) {
+          document.getElementById("month-from").value =
+            urlParams.get("month")
+          document.getElementById("year-from").value =
+            urlParams.get("year")
+        }
+      }
+
+      window.onload = (event) => {
+        urlParser()
+        canvasStuff()
+        urlMaker()
+      }
+
+      document.getElementById("help").onclick = () => {
+        document.getElementById("help-popup").style.visibility =
+          "visible"
+      }
+
+      document.getElementById("share").onclick = () => {
+        document.getElementById("share-popup").style.visibility =
+          "visible"
+      }
+
+      document.getElementById("submit").onclick = () => {
+        document.getElementById("help-popup").style.visibility =
+          "hidden"
+        canvasStuff()
+      }
+
+      cancelBtn = document.getElementsByClassName("button cancel")
+      Array.from(cancelBtn).forEach((btn) => {
+        btn.onclick = () => {
+          document.getElementById("help-popup").style.visibility =
+            "hidden"
+          document.getElementById("share-popup").style.visibility =
+            "hidden"
+        }
       })
 
-  }
-};
-
-function urlMaker() {
-  document.getElementById('url').value = `${window.location.href.split('?')[0]}?month=${document.getElementById('month-from').value}&year=${document.getElementById('year-from').value}`.replace('#', '');
-};
-
-function urlParser() {
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  if (urlParams.get('month')) {
-    document.getElementById('month-from').value = urlParams.get('month')
-    document.getElementById('year-from').value = urlParams.get('year')
-  }
-
-};
-
-window.onload = (event) => {
-  urlParser();
-  canvasStuff();
-  urlMaker();
-  };
-
-document.getElementById('help').onclick = () => {
-  document.getElementById('help-popup').style.visibility = 'visible';
-}
-
-document.getElementById('share').onclick = () => {
-  document.getElementById('share-popup').style.visibility = 'visible';
-}
-
-document.getElementById('submit').onclick = () => {
-  document.getElementById('help-popup').style.visibility = 'hidden';
-  canvasStuff();
-}
-
-cancelBtn = document.getElementsByClassName('button cancel')
-Array.from(cancelBtn).forEach(btn => {
-  btn.onclick = () => {
-    document.getElementById('help-popup').style.visibility = 'hidden';
-    document.getElementById('share-popup').style.visibility = 'hidden';
-  }
-})
-
-document.getElementById('download').onclick = () => {
-  let canvas = document.getElementById("canvas");
-  let link = document.createElement("a");
-  link.href = canvas.toDataURL("image/png");
-  link.download = "toirenojado.png";
-  link.click();
-}
-  </script>
-  <script>
-    if (window.matchMedia &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      document.body.classList.add('dark');
-    }
-  </script>
-</body>
+      document.getElementById("download").onclick = () => {
+        let canvas = document.getElementById("canvas")
+        let link = document.createElement("a")
+        link.href = canvas.toDataURL("image/png")
+        link.download = "toirenojado.png"
+        link.click()
+      }
+    </script>
+    <script>
+      if (
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+      ) {
+        document.body.classList.add("dark")
+      }
+    </script>
+  </body>
 </html>
